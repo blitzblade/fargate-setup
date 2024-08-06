@@ -1,22 +1,22 @@
 
 # PostgreSQL (Amazon RDS)
 resource "aws_db_instance" "postgres" {
-  identifier              = "postgres-db"
-  engine                  = "postgres"
-  engine_version          = "14"
-#   parameter_group_name    = aws_db_parameter_group.postgresql.name
-  instance_class          = "db.t3.micro"
-  allocated_storage       = 20
-  db_name                 = var.db_name
-  username                = var.db_username
-  password                = var.db_password
-  skip_final_snapshot     = true
-  publicly_accessible     = true
-  storage_encrypted       = true
+  identifier     = "postgres-db"
+  engine         = "postgres"
+  engine_version = "14"
+  #   parameter_group_name    = aws_db_parameter_group.postgresql.name
+  instance_class      = "db.t3.micro"
+  allocated_storage   = 20
+  db_name             = var.db_name
+  username            = var.db_username
+  password            = var.db_password
+  skip_final_snapshot = true
+  publicly_accessible = true
+  storage_encrypted   = true
 
   # VPC and subnet group configurations
-  vpc_security_group_ids  = [aws_security_group.db_sg.id]
-  db_subnet_group_name    = aws_db_subnet_group.db_subnet_group.name
+  vpc_security_group_ids = [aws_security_group.db_sg.id]
+  db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
 }
 
 resource "aws_db_subnet_group" "db_subnet_group" {
@@ -25,8 +25,8 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 }
 
 resource "aws_security_group" "db_sg" {
-  name        = "db_sg"
-  vpc_id      = aws_vpc.main.id
+  name   = "db_sg"
+  vpc_id = aws_vpc.main.id
 
   ingress {
     from_port   = 5432
@@ -49,12 +49,12 @@ output "rds_endpoint" {
 
 # RabbitMQ (EC2 instance with EBS volume)
 resource "aws_instance" "rabbitmq" {
-  ami             = "ami-04a81a99f5ec58529"  # Ubuntu Server 20.04 LTS AMI ID
-  instance_type   = "t2.micro"
-  key_name        = var.key_name # Replace with your actual key pair name
-  subnet_id       = aws_subnet.public[0].id
+  ami                    = "ami-04a81a99f5ec58529" # Ubuntu Server 20.04 LTS AMI ID
+  instance_type          = "t2.micro"
+  key_name               = var.key_name # Replace with your actual key pair name
+  subnet_id              = aws_subnet.public[0].id
   vpc_security_group_ids = [aws_security_group.rabbitmq_sg.id]
-  user_data = <<-EOF
+  user_data              = <<-EOF
               #!/bin/bash
               sudo apt-get update
               sudo apt-get install -y erlang
@@ -78,7 +78,7 @@ resource "aws_security_group" "rabbitmq_sg" {
   name        = "rabbitmq_sg"
   description = "Allow SSH and RabbitMQ traffic"
   vpc_id      = aws_vpc.main.id # Replace with your actual VPC ID
-  
+
   ingress {
     from_port   = 22
     to_port     = 22
@@ -119,7 +119,7 @@ resource "aws_elasticache_cluster" "redis" {
   port                 = 6379
   subnet_group_name    = aws_elasticache_subnet_group.redis_subnet_group.name
 
-  security_group_ids   = [aws_security_group.redis_sg.id]
+  security_group_ids = [aws_security_group.redis_sg.id]
 }
 
 resource "aws_elasticache_subnet_group" "redis_subnet_group" {
@@ -128,8 +128,8 @@ resource "aws_elasticache_subnet_group" "redis_subnet_group" {
 }
 
 resource "aws_security_group" "redis_sg" {
-  name        = "redis-sg"
-  vpc_id      = aws_vpc.main.id
+  name   = "redis-sg"
+  vpc_id = aws_vpc.main.id
 
   ingress {
     from_port   = 6379
@@ -148,11 +148,11 @@ resource "aws_security_group" "redis_sg" {
 
 # Elasticsearch (Amazon OpenSearch Service)
 resource "aws_opensearch_domain" "elasticsearch" {
-  domain_name           = "es-domain"
-  engine_version        = "Elasticsearch_7.1"
+  domain_name    = "es-domain"
+  engine_version = "Elasticsearch_7.1"
 
   cluster_config {
-    instance_type = "t3.small.search"
+    instance_type  = "t3.small.search"
     instance_count = 2
   }
 
@@ -171,29 +171,29 @@ resource "aws_opensearch_domain" "elasticsearch" {
   }
 
   domain_endpoint_options {
-    enforce_https = true
+    enforce_https       = true
     tls_security_policy = "Policy-Min-TLS-1-2-2019-07"
   }
 
   advanced_security_options {
-    enabled = true
+    enabled                        = true
     internal_user_database_enabled = true
     master_user_options {
-      master_user_name = var.es_username
+      master_user_name     = var.es_username
       master_user_password = var.es_password
     }
   }
 
   access_policies = jsonencode({
-    "Version": "2012-10-17",
-    "Statement": [
+    "Version" : "2012-10-17",
+    "Statement" : [
       {
-        "Effect": "Allow",
-        "Principal": {
-          "AWS": "*"
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : "*"
         },
-        "Action": "es:*",
-        "Resource": "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/es-domain/*"
+        "Action" : "es:*",
+        "Resource" : "arn:aws:es:${var.region}:${data.aws_caller_identity.current.account_id}:domain/es-domain/*"
       }
     ]
   })

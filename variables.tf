@@ -5,108 +5,108 @@ variable "vpc_cidr" {
 }
 
 variable "az_1" {
-    description = "Availability Zone 1"
-    type = string
-    default = "us-east-1a"
+  description = "Availability Zone 1"
+  type        = string
+  default     = "us-east-1a"
 }
 
 variable "az_2" {
   description = "Availability Zone 2"
-  type = string
-  default = "us-east-1b"
+  type        = string
+  default     = "us-east-1b"
 }
 
 variable "db_username" {
-    description = "postgres username"
-    type = string
-    default = "postgres"
+  description = "postgres username"
+  type        = string
+  default     = "postgres"
 }
 
 variable "db_name" {
-    description = "postgres db name"
-    type = string
-    default = "trading_db"
+  description = "postgres db name"
+  type        = string
+  default     = "trading_db"
 }
 
 variable "db_password" {
-    description = "postgres password"
-    type = string
-    default = "p05tgr3s"
+  description = "postgres password"
+  type        = string
+  default     = "p05tgr3s"
 }
 
 variable "es_username" {
-    description = "elasticsearch username"
-    type = string
-    default = "master-user"
-  
+  description = "elasticsearch username"
+  type        = string
+  default     = "master-user"
+
 }
 
 variable "es_password" {
-    description = "elasticsearch password"
-    type = string
-    default = "SuperSecretPassword003!"
-  
+  description = "elasticsearch password"
+  type        = string
+  default     = "SuperSecretPassword003!"
+
 }
 
 variable "key_name" {
-    description = "key name"
-    type = string
-    default = "ec2ecsglog"
-  
+  description = "key name"
+  type        = string
+  default     = "ec2ecsglog"
+
 }
 
 variable "region" {
-    description = "default region"
-    type = string
-    default = "us-east-1"
+  description = "default region"
+  type        = string
+  default     = "us-east-1"
 }
 
 variable "rabbitmq_username" {
-    description = "rabbitmq username"
-    type = string
-    default = "guest"
+  description = "rabbitmq username"
+  type        = string
+  default     = "guest"
 }
 
 variable "rabbitmq_password" {
-    description = "rabbitmq password"
-    type = string
-    default = "guest"
+  description = "rabbitmq password"
+  type        = string
+  default     = "guest"
 }
 
 
 ### internal ip addresses
 variable "db_host" {
-    description = "postgres db host"
-    type = string
-    default = "10.0.2.65"
+  description = "postgres db host"
+  type        = string
+  default     = "aws-db-host"
 }
 
 variable "rabbitmq_host" {
-    description = "Rabbitmq server"
-    type = string
-    default = "10.0.1.45"
-  
+  description = "Rabbitmq server"
+  type        = string
+  default     = "10.0.2.234"
+
 }
 
 variable "redis_host" {
-    description = "Redis server"
-    type = string
-    default = "10.0.2.65"
-  
+  description = "Redis server"
+  type        = string
+  default     = "redis-cluster.bszlgm.0001.use1.cache.amazonaws.com"
+
 }
 
 variable "elasticsearch_host" {
-    description = "Elastic search server"
-    type = string
-    default = "10.0.2.65:9200"
-  
+  description = "Elastic search server"
+  type        = string
+  default     = "search-es-domain-oeo24scgrnz4l72mxvl6j3cuxe.us-east-1.es.amazonaws.com"
+
 }
 
 variable "redis_port" {
-    description = "Redis port"
-    type = string
-    default = "6379"
-  
+  description = "Redis port"
+  type        = string
+  default     = "6379"
+
 }
 
 # variable "aws_access_key" {
@@ -122,34 +122,34 @@ variable "redis_port" {
 # }
 
 variable "ec2_task_execution_role_name" {
-    description = "ECS task execution role name"
-    default = "myEcsTaskExecutionRole"
+  description = "ECS task execution role name"
+  default     = "myEcsTaskExecutionRole"
 }
 
 variable "ecs_auto_scale_role_name" {
-    description = "ECS auto scale role name"
-    default = "myEcsAutoScaleRole"
+  description = "ECS auto scale role name"
+  default     = "myEcsAutoScaleRole"
 }
 
 variable "az_count" {
-    description = "Number of AZs to cover in a given region"
-    default = "2"
+  description = "Number of AZs to cover in a given region"
+  default     = "2"
 }
 
 variable "app_image" {
-    description = "Docker image to run in the ECS cluster"
-    default = "bradfordhamilton/crystal_blockchain:latest"
+  description = "Docker image to run in the ECS cluster"
+  default     = "bradfordhamilton/crystal_blockchain:latest"
 }
 
 variable "app_port" {
-    description = "Port exposed by the docker image to redirect traffic to"
-    default = 8081
+  description = "Port exposed by the docker image to redirect traffic to"
+  default     = 8081
 
 }
 
 variable "app_count" {
-    description = "Number of docker containers to run"
-    default = 3
+  description = "Number of docker containers to run"
+  default     = 3
 }
 
 variable "health_check_path" {
@@ -157,11 +157,11 @@ variable "health_check_path" {
 }
 
 variable "fargate_cpu" {
-    description = "Fargate instance CPU units to provision (1 vCPU = 1024 CPU units)"
-    default = 512
+  description = "Fargate instance CPU units to provision (1 vCPU = 1024 CPU units)"
+  default     = 512
 }
 
 variable "fargate_memory" {
-    description = "Fargate instance memory to provision (in MiB)"
-    default = 1024
+  description = "Fargate instance memory to provision (in MiB)"
+  default     = 1024
 }

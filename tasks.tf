@@ -109,25 +109,29 @@
 
 #market data service
 resource "aws_ecs_task_definition" "market_data_task" {
- family             = "trading-services-market-data"
- network_mode       = "awsvpc"
- execution_role_arn = aws_iam_role.ecs_instance_role.arn
+  family                   = "trading-services-market-data"
+  network_mode             = "awsvpc"
+  requires_compatibilities = ["FARGATE"]
+  execution_role_arn       = aws_iam_role.ecs_instance_role.arn
+  task_role_arn            = aws_iam_role.ecs_instance_role.arn
+  cpu                      = var.fargate_cpu
+  memory                   = var.fargate_memory
 
- container_definitions = jsonencode([
-   {
-     name      = "market-data-service"
-     image     = "docker.io/kwesidadson/market-data-service:latest"
-     cpu                = var.fargate_cpu
-     memory = var.fargate_memory
-     essential = true
-     portMappings = [
-       {
-         containerPort = 8081
-         hostPort      = 8081
-         protocol      = "tcp"
-       }
-     ]
-     logConfiguration = {
+  container_definitions = jsonencode([
+    {
+      name      = "market-data-service"
+      image     = "docker.io/kwesidadson/market-data-service:latest"
+      cpu       = var.fargate_cpu
+      memory    = var.fargate_memory
+      essential = true
+      portMappings = [
+        {
+          containerPort = 8081
+          hostPort      = 8081
+          protocol      = "tcp"
+        }
+      ]
+      logConfiguration = {
         logDriver = "awslogs"
         options = {
           "awslogs-group"         = "/ecs/market-data-service"
@@ -135,7 +139,7 @@ resource "aws_ecs_task_definition" "market_data_task" {
           "awslogs-stream-prefix" = "ecs"
         }
       }
-     environment = [
+      environment = [
         {
           name  = "SPRING_DATASOURCE_HOST"
           value = var.db_host
@@ -148,7 +152,7 @@ resource "aws_ecs_task_definition" "market_data_task" {
           name  = "SPRING_DATASOURCE_PASSWORD"
           value = var.db_password
         },
-         {
+        {
           name  = "SPRING_DATASOURCE_DATABASE"
           value = var.db_name
         },
@@ -176,7 +180,7 @@ resource "aws_ecs_task_definition" "market_data_task" {
           name  = "ELASTICSEARCH_MASTER_PASSWORD"
           value = var.es_password
         },
-         {
+        {
           name  = "REDIS_HOST"
           value = var.redis_host
         },
@@ -185,26 +189,28 @@ resource "aws_ecs_task_definition" "market_data_task" {
           value = var.redis_port
         }
       ]
-   }
- ])
+    }
+  ])
 }
 
 resource "aws_ecs_service" "market_data_service" {
- name            = "market-data-service"
- cluster         = aws_ecs_cluster.main.id
- task_definition = aws_ecs_task_definition.market_data_task.arn
- desired_count   = 1
+  name            = "market-data-service"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.market_data_task.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
 
- network_configuration {
-   subnets         = aws_subnet.private.*.id
-   security_groups = [aws_security_group.ecs_tasks.id]
- }
+  network_configuration {
+    subnets          = aws_subnet.private.*.id
+    security_groups  = [aws_security_group.ecs_tasks.id]
+    assign_public_ip = false
+  }
 
- load_balancer {
-   target_group_arn = aws_alb_target_group.market_data.arn
-   container_name   = "market-data-service"
-   container_port   = 8081
- }
+  load_balancer {
+    target_group_arn = aws_alb_target_group.market_data.arn
+    container_name   = "market-data-service"
+    container_port   = 8081
+  }
 
   depends_on = [aws_alb_listener.market_data_listener]
 }
