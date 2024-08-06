@@ -1,8 +1,8 @@
 
-resource "aws_key_pair" "ec2_key" {
-  key_name   = "ec2ecsglog"
-  public_key = file("C:/Users/samson.dadson/.ssh/id_rsa.pub")
-}
+# resource "aws_key_pair" "ec2_key" {
+#   key_name   = "ec2ecsglog"
+#   public_key = file("C:/Users/samson.dadson/.ssh/id_rsa.pub")
+# }
 
 resource "aws_iam_role" "ecs_instance_role" {
   name = "ecsInstanceRole3"
